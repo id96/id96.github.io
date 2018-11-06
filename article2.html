@@ -53,10 +53,15 @@
 						<div class="inner">
                             <h1>A Deeper Dive</h1>
 							<h2>And the coding begins...</h2>
-							<p>Here is a general view of the XML Nest Structure of the Archived Files. </p>
-							<pre><code>#TOME
-<<span class="pink">body</span>>
-	<<span class="pink">text</span>>
+							<p>To start the corpus creation of treated text, we first need to take a first look at our data. The files can be found in the Stanford University Library repository in their <a href="https://frda.stanford.edu/en/ap">French Revolution Digital Archive</a>. 
+								On this site, you can see each page available available for download as a scanned image jpeg, pdf, a raw text file, or as an XML file. At this point, I had to make the decision of how I wanted to save the data on the site locally to my machine. Images and PDFs would not be useful, but should I save the archives as text files or XML? XML would be the better choice, since it was already structured into a parseable format. 
+							</p>
+
+							<p>	To begin, I first downloaded all the data from the Stanford University Library repository. There are 101 tomes of data in the Archives Parlementaires. Upon further inspection, it became clear that only tomes 8-31 were relevant to this project. Tomes 1-8 were focused on the États généraux and not the Assemblée Nationale. All tomes after tome 31 were beyond our timeline of September 1789 to September 1791.Therefore, tomes 8-31 were downloaded into an archives folder as TEI XML files so that they maintained their nested and tagged structure.</p>
+							<p>Here is a deconstructed, general view of the XML Nest Structure of an archived file within a tome. Once we understand what is going on in the tree, we can use <a href="https://www.crummy.com/software/BeautifulSoup/bs4/doc/">Beautiful Soup</a> to pull data out from within the tags. This way, we can seperate speeches nested within sessions and then pull out associated information, like the date of the speech, the speaker, and the raw text of what that speaker said.</p>
+							<pre><code>#TOME X
+<<span class="pink">text</span>>
+	<<span class="pink">body</span>>
 		<<span class="pink">div1</span> type = "volume" n="8">
 			#SESSION
 			<<span class="pink">div2</span> type = "session">   
@@ -82,8 +87,7 @@
 
 			#END OF SESSION
 			< /<span class="pink">div2 </span>>
-
-			#NEXT SESSION
+			<!-- #NEXT SESSION
 			<<span class="pink">div2 </span>type = "session" >   
 
 				#PARLIAMENT & LEADER
@@ -111,14 +115,15 @@
 				< /<span class="pink">sp</span>>
 
 			#END OF SESSION
-			< /<span class="pink">div2</span>>
-
+			< /<span class="pink">div2</span>> -->
 		#END OF TOME
-		< /<span class="pink">div1</span>>
-
+		< /<span class="pink">div1</span>> 
 	< /<span class="pink">body</span>>
 < /<span class="pink">text</span>></code>
-							</pre>
+</pre>
+
+<p>We can see here that corresponding tags are nested within each other. After looking at this structure, I wrote a test script on only one of the 24 total tomes. I used Beautiful Soup to parse the XML and then I took that scraped data and wrote it into a tsv file. </p>
+
 
 							<!-- <h3>Stop Words</h3> -->
 							<img class="image left" src="images/table1.png" alt="Table1">
