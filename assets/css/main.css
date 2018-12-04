@@ -2566,7 +2566,7 @@ input, select, textarea {
 		-webkit-flex-wrap: wrap;
 		-ms-flex-wrap: wrap;
 		flex-wrap: wrap;
-		postiion: relative;
+		position: relative;
 		margin: -2.5em 0 0 -2.5em;
 	}
 
@@ -2756,18 +2756,6 @@ input, select, textarea {
 			opacity: 1;
 		}
 
-		@media screen and (max-width: 1280px) {
-
-			.tiles {
-				margin: -1.25em 0 0 -1.25em;
-			}
-
-				.tiles article {
-					width: calc(33.3333333333% - 1.25em);
-					margin: 1.25em 0 0 1.25em;
-				}
-
-		}
 
 		@media screen and (max-width: 980px) {
 
