@@ -1,0 +1,113 @@
+<!DOCTYPE HTML>
+<!--
+	Phantom by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Reading the Archives</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<link rel="icon" href="images/favicon.png">
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+	</head>
+	<body class="is-preload">
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<div class="inner">
+
+
+							<!-- Nav -->
+								<nav>
+									<ul>
+										<li><a href="#menu">Menu</a></li>
+									</ul>
+								</nav>
+
+						</div>
+					</header>
+
+				<!-- Menu -->
+					<nav id="menu">
+						<h2>Menu</h2>
+						<ul>
+							<li><a href="index.html">Home</a></li>
+							<li><a href="about.html">About</a></li>
+							<li><a href="blog.html">Blog</a></li>
+							<li><a href="portfolio.html">Portfolio</a></li>
+							<li><a href="contact.html">Contact</a></li>
+						</ul>
+					</nav>
+
+				<!-- Main -->
+					<div id="main">
+						<div class="inner">
+                            <h1>Reading the Archives</h1>
+							<h2>Reading XML Archives for Metadata </h2>
+							<p>In this blog post, I will go over the process of actually reading the XML files found in Standford's archive to a cleaner, TSV (tab separated values) file. I want to take only the necessary information from the archives and save this to a table of sorts, where I create columns for fields of data that are interesting. </p>
+							<p>For my first test, I only included through one tome. This was easy to do because it was only reading through one file. I originally wanted five columns for my tsv of all speeches: tome name, speech id, session id, speaker, and the raw text within the speech. With this sorted out, I started writing the Beautiful Soup. <a href="https://www.crummy.com/software/BeautifulSoup/bs4/doc/#id16" >Beautiful Soup</a> is an amazing Python library to pull data out of HTML and XML files. It is usually used to scrape data off the internet. For me, it was a bit tricky to play around with, but then I eventually got the hang of it.</p>
+							<p>In my script, I first imported BeautifulSoup and then opened the file I would write to. I wrote about 4 different scripts, each with its own set of issues, before I got to a script that worked as I wanted it to. For my first test, I read only one tome of the 24 total. I created a soup object that ran BeautifulSoup in its lmxl mode. I created a variable "speeches" and ran the function "find_all" on the sp tag so that I could determine how speeches there were. I used the "find" function on the string "speaker" to determine the corresponding speaker. The resulting numbers were not accurate to the PNAS results, so I knew that I wasn't finding the speeches correctly.
+							</p>
+							<p>I took a look back at the original XML tree and realized that all speeches that we wanted (speeches during the Assemblée Nationale) were all nested with div2 tags with type "session". So in the next script, I instead iterated through all the sessions to find the speeches nested within. This worked a lot better. </p>
+							<p>Using this same process, we could find other important information, like date of the speech and the speech's speaker. After this code worked on one tome, I needed to find a way to iterate through all the tomes in my archives. To do this, I imported os to use a list directory with a basepath. All my files were saved in an <i>archives</i> folder with their filename as <i>tome#.xml</i> where the # sign was the corresponding tome number. With this code, I was now able to go through all the tome, in all the sessions, to find the total speeches. </p>
+							<p> Here is my code to find the data through BeautifulSoup: </p>
+							<pre>
+								<code>from bs4 import BeautifulSoup
+import os
+
+basepath = "archives/"
+for filename in os.listdir(basepath):
+	path = os.path.join(basepath, filename)
+
+	with open(path, encoding="utf-8-sig") as reader: #encoding to compensate for accent errors
+		soup = BeautifulSoup(reader, "lxml")
+		sessions = soup.find_all("div2", type="session")
+		date = session.find("date")["value"]
+		if len(filename) == 9: #if tome number was single digit (ex tome8.xml)
+			tome = filename[4]
+		if len(filename) == 10: #if tome number was double digit (ex tome11.xml)
+			tome = filename[4:6]
+		for session in sessions: #iterate through sessions to find nested speeches
+			speeches = session.find_all("sp") #find sp tags
+			for speech in speeches:
+				speaker = speech.find("speaker") #find speaker tag nested with sp tag
+											</code>
+							</pre>
+							<p>In my next blog post I will discuss writing this information to a TSV file.</p>
+						</div>
+					</div>
+
+				<!-- Footer -->
+				<footer class="footer">
+						<div class="inner">
+                            <section>
+                                    <h2 style="margin-right: 30px;
+                                    display: inline-block;">Follow</h2>
+                                    <ul class="icons">
+                                        <li><a href="https://www.linkedin.com/in/isabelle-debrabanter/" class="icon style2 fa-linkedin"><span class="label">Twitter</span></a></li>
+                                        <li><a href="https://github.com/id96" class="icon style2 fa-github"><span class="label">GitHub</span></a></li>
+                                        <li><a href="mailto:id96@cornell.edu" class="icon style2 fa-envelope-o"><span class="label">Email</span></a></li>
+                                    </ul>
+                                </section>
+                                <ul class="copyright">
+                                    <li>&copy; Isabelle De Brabanter. All rights reserved</li>
+                                </ul>
+						</div>
+					</footer>
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>
