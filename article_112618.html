@@ -6,7 +6,7 @@
 -->
 <html>
 	<head>
-		<title>More Data cleanup</title>
+		<title>Almost there! But too many speeches?</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
@@ -47,11 +47,12 @@
 				<!-- Main -->
 					<div id="main">
 						<div class="inner">
-                            <h1>TITLE</h1>
-							<h2>SUBTITLE</h2>
-							<p>TEXT</p>
-							<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-							<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                            <h1>Almost there! But too many speeches?</h1>
+							<h2>the numbers don't match...</h2>
+							<p>After reading the archive files and writing specific information to a TSV, I wanted to check to see if I was on track with the metrics given in the PNAS writeup. Their data cleanup had the ultimate numbers of 9,930,592 words in their raw corpus. I had 11,060,994 which was on the order of 1 million more words: a problem. They also had 44,953 total speeches whereas I had 45,768 (815 too many). I would need to find a way to get our numbers closer together.</p>
+							<p>My first thought was to remove all speeches that had no speaker (speaker tag was empty, or n/a). This only removed 54 speeches and was not enough. Then I tried removing entire sessions where the President = ANNEXE. This removed far too many speeches to the point where I was significantly below the target number. That was not even including other spelling of annexe, or when annexe was in lowercase. Then I tried removing all speeches with dates in Sept 1791 to see if the date range was not inclusive of this last month. I was 1,476 speeches to few with this removal, and in a worse place than before when I was only 815 speeches off. </p>
+							<p>I ultimately went back to the speeches script. After a conversation with my mentor Laure, we determined that it may be a BeautifulSoup issue iterating over too many speeches. So we added "recursive=false" when finding all speech tags, and this eliminated around ~600 speeches. We were the most comfortable with this modification and decided to leave it. </p>
+							<p>Now that the raw text vocabulary is mostly sorted out, I will write a cleaning script to make all raw text lowercase, remove words less than three characters, separate contractions, and remove words in the stopwords list: 48 French words ('les', 'que', 'des', 'qui', 'est', 'vous', 'dans', 'pour', 'une', 'pas', 'par', 'sur', 'nous', 'cette', 'aux', 'mais', 'ils', 'leur','être', 'sont', 'ces', 'ont', 'elle', 'tous', 'avec', 'faire', 'son','ses', 'dont', 'comme', 'votre', 'soit', 'lui', 'peut', 'leurs', 'donc','avez', 'doit', 'faut', 'sera', 'était', 'vos', 'ceux', 'avoir', 'cet', 'nos', 'ainsi', 'avait'). I will describe this process in my next blog post. </p>
 						</div>
 					</div>
 
