@@ -9,9 +9,9 @@
 		<title>Curating clean text</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="assets/css/main.css" />
-		<link rel="icon" href="images/favicon.png">
-        <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+		<link rel="stylesheet" href="../assets/css/main.css" />
+		<link rel="icon" href="../images/favicon.png">
+		<noscript><link rel="stylesheet" href="../assets/css/noscript.css" /></noscript>
         <script src="https://d3js.org/d3.v5.min.js"></script>
         <style>
             .gridlines line {
@@ -43,11 +43,11 @@
 					<nav id="menu">
 						<h2>Menu</h2>
 						<ul>
-							<li><a href="index.html">Home</a></li>
-							<li><a href="about.html">About</a></li>
-							<li><a href="blog.html">Blog</a></li>
-							<li><a href="portfolio.html">Portfolio</a></li>
-							<li><a href="contact.html">Contact</a></li>
+							<li><a href="../index.html">Home</a></li>
+							<li><a href="../about.html">About</a></li>
+							<li><a href="../blog.html">Blog</a></li>
+							<li><a href="../portfolio.html">Portfolio</a></li>
+							<li><a href="../contact.html">Contact</a></li>
 						</ul>
 					</nav>
 
@@ -98,11 +98,11 @@
         </div>
 
 		<!-- Scripts -->
-			<script src="assets/js/jquery.min.js"></script>
-			<script src="assets/js/browser.min.js"></script>
-			<script src="assets/js/breakpoints.min.js"></script>
-			<script src="assets/js/util.js"></script>
-            <script src="assets/js/main.js"></script>
+            <script src="../assets/js/jquery.min.js"></script>
+            <script src="../assets/js/browser.min.js"></script>
+            <script src="../assets/js/breakpoints.min.js"></script>
+            <script src="../assets/js/util.js"></script>
+            <script src="../assets/js/main.js"></script>
             <script>
                 let svg = d3.select("svg#estate");
                 let width = svg.attr("width");
@@ -124,7 +124,7 @@
 
 
                 var estateData;
-                d3.json("date_sep.json").then(function(data) {
+                d3.json("../date_sep.json").then(function(data) {
                     estateData = data;
                     console.log("data",data);
 
