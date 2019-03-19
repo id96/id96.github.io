@@ -49,9 +49,33 @@
 						<div class="inner">
                             <h1>Curating clean text</h1>
 							<h2>Creating the optimal and most frequent vocabulary</h2>
-							<p>TEXT</p>
-							<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-							<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+							<p>Today I met with my advisor Prof Mimno to discuss my progress over the semester as well as to get some programming tips. I'd been struggling with 
+							cleaning up the raw text I had been saving from all_speeches.tsv (the script that pulled text from their original XML files). The original experiment wanted the 
+							text to be set to lowercase, with contractions separated, and all words less than 3 characters removed. We also needed to remove stopwords. I had originally been trying
+							to make if statements and for loops, (for example, if a word len < 3...), but they were failing miserably and not catching fringe cases. Professor Mimno suggested using
+							regex, or a regular expression to filter through the word tokens (instead of looping through them). Here is what we came up with:
+							</p>
+							<pre>
+								<code>word_pattern = re.compile("\w[\-\w]+\w")
+
+#read through the raw text speech by speech
+for line in vocab_reader: 
+	line = line.rstrip() #removes trailing characters like extra spaces
+	line = line.lower()	#makes lowercase
+	tokens = word_pattern.findall(line) #this applies the regex expression to all words in the speeches
+								</code>
+							</pre>
+							<h3>REGEX BREAKDOWN</h3>
+							<p>What does re.compile("\w[\-\w]+\w") even mean?</p>
+							<p>Let's break it down.</p>
+							<p>
+								
+							</p>
+							<p>
+								After this code was applied, to take out stopwords, I created an array with all stopwords as item. If the word (or token) was in this array, I replaced the 
+								word with '', which is basically removing it from the corpus. After this reduction, I still have 45,767 speeches and 5,045,232 words. I should have 44,913 speeches and 4,765,773 words.
+								On average, that means that my 854 extra speeches containt 279,459 extra words (~327 words each) after clean up. I still need to find a solution to this before I start topic modeling!
+							</p>
 						</div>
 					</div>
 

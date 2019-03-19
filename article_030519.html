@@ -1,0 +1,246 @@
+<!DOCTYPE HTML>
+<!--
+	Phantom by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Curating clean text</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<link rel="icon" href="images/favicon.png">
+        <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+        <script src="https://d3js.org/d3.v5.min.js"></script>
+        <style>
+            .gridlines line {
+                stroke: #bbb; }
+            .gridlines .domain {
+                stroke: none; }
+        </style>
+	</head>
+	<body class="is-preload">
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<div class="inner">
+
+
+							<!-- Nav -->
+								<nav>
+									<ul>
+										<li><a href="#menu">Menu</a></li>
+									</ul>
+								</nav>
+
+						</div>
+					</header>
+
+				<!-- Menu -->
+					<nav id="menu">
+						<h2>Menu</h2>
+						<ul>
+							<li><a href="index.html">Home</a></li>
+							<li><a href="about.html">About</a></li>
+							<li><a href="blog.html">Blog</a></li>
+							<li><a href="portfolio.html">Portfolio</a></li>
+							<li><a href="contact.html">Contact</a></li>
+						</ul>
+					</nav>
+
+				<!-- Main -->
+					<div id="main">
+						<div class="inner">
+                            <h1>d3!!!!!</h1>
+                            <h2>Data Visualisations!</h2>
+                            <p>Let's go!</p>
+                            <svg id="estate" height="500" width="800"></svg>
+                            <p>Top 15 Words of Topic 0:</p>
+                                <li>1. cela</li>
+                                <li>2. membre</li>
+                                <li>3. bien</li>
+                                <li>4. messieurs</li>
+                                <li>5. rires</li>
+                                <li>6. demande</li>
+                                <li>7. voix</li>
+                                <li>8. droite</li>
+                                <li>9. oui</li>
+                                <li>10. plusieurs</li>
+                                <li>11. non</li>
+                                <li>12. membres</li>
+                                <li>13. applaudissements</li>
+                                <li>14. gauche</li>
+                                <li>15. murmures</li>
+
+                        </div>
+                    </div>
+            <!-- Footer -->
+            <footer class="footer">
+                    <div class="inner">
+                        <section>
+                                <h2 style="margin-right: 30px;
+                                display: inline-block;">Follow</h2>
+                                <ul class="icons">
+                                    <li><a href="https://www.linkedin.com/in/isabelle-debrabanter/" class="icon style2 fa-linkedin"><span class="label">Twitter</span></a></li>
+                                    <li><a href="https://github.com/id96" class="icon style2 fa-github"><span class="label">GitHub</span></a></li>
+                                    <li><a href="mailto:id96@cornell.edu" class="icon style2 fa-envelope-o"><span class="label">Email</span></a></li>
+                                </ul>
+                            </section>
+                            <ul class="copyright">
+                                <li>&copy; Isabelle De Brabanter. All rights reserved</li>
+                            </ul>
+                    </div>
+                </footer>
+
+        </div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+            <script src="assets/js/main.js"></script>
+            <script>
+                let svg = d3.select("svg#estate");
+                let width = svg.attr("width");
+                let height = svg.attr("height");
+                let margin = {
+                top: 20,
+                right: 20,
+                bottom: 20,
+                left: 20
+                };
+                let chartWidth = width - margin.left - margin.right;
+                let chartHeight = height - margin.top - margin.bottom;
+
+
+                // function create_svg(topic, estate, month, prob, count){
+
+                // };
+
+
+
+                var estateData;
+                d3.json("date_sep.json").then(function(data) {
+                    estateData = data;
+                    console.log("data",data);
+
+                    const monthScale = d3.scaleTime()
+                    .domain([new Date(1789, 6), new Date(1791, 8)])
+	                .range([0, 700]);
+            
+
+                    const probScale = d3.scaleLinear()
+                    .domain([0, 0.06])
+                    .range([chartHeight, 0]);
+
+                    const estateScale = d3.scaleOrdinal()
+                        .range(["red", "blue", "green"]);
+
+                    // AXES
+                    let leftAxis = d3.axisLeft(probScale)
+                        // .tickFormat(d3.format(",.2f"))
+                        .tickFormat(d3.format(".2f"))
+                        // .ticks(6); 
+                    svg.append("g").attr("class", "y axis") 
+                        .attr("transform","translate("+ (margin.left) +","+(-margin.top/2) +")")
+                        .call(leftAxis);
+
+                    let bottomAxis = d3.axisBottom(monthScale)
+                        .tickFormat(d3.timeFormat("%b %Y"))
+                        .ticks(27);
+                
+                    svg.append("g")
+                        .attr("class", "x axis")
+                        .attr("transform", "translate("+ margin.left +","+ (chartHeight -10) +")")
+                        .call(bottomAxis)
+                        .selectAll("text") 
+                            .style("text-anchor", "end")
+                            .attr("dx", "-.8em")
+                            .attr("dy", ".15em")
+                            .attr("transform", "rotate(-65)");
+                   
+                    let plot = svg.append("g")
+                        .attr("transform","translate("+ (margin.left) +","+ (margin.top) +")")
+                    
+                    plot.append("text")
+                        .attr("x", (chartWidth / 2))             
+                        .attr("y", 0 - (margin.top / 4))
+                        .attr("text-anchor", "middle")  
+                        .style("font-size", "16px") 
+                        .style("text-decoration", "underline")  
+                        .text("Topic 0");
+
+
+                    topic_0 = data["topic 0"];
+                    // d3.values(data).forEach(function(topic){
+                        d3.keys(topic_0).forEach(function(key){
+                            estate = topic_0[key]
+                            // console.log(key,estate)
+                            
+                            d3.keys(estate).forEach(function(key2){
+                                month = estate[key2]
+                                prob = month["prob"];
+                                count = month["count"];
+                                // console.log(key2, prob, count)
+                                // console.log(typeof(key2));
+                             
+                                let parseDate = d3.timeParse("%Y-%m");
+                                let formatTime = d3.timeFormat("%b %Y");
+                                key2 = parseDate(key2);
+                                // console.log(key2);
+
+                                var linegen = d3.line()
+                                    // .x(function(d, i) { return monthScale(i); }) 
+                                    // .y(function(d) { return probScale(d.y); }) 
+                                    // .x(function(){ return monthScale(key2);}) 
+                                    // .y( function() { return probScale(prob);}) 
+                                    .x( (d,i) =>  monthScale( i ) )
+                                    .y(  d    =>  probScale( d ))
+                                    .curve(d3.curveMonotoneX);
+
+                                let line = plot.append("path")
+                                    .datum([])
+                                    .attr("class", "line")
+                                    .attr("d", linegen)
+
+                                let circle = plot.append("circle")
+                                    .attr("cx", monthScale(key2))
+                                    .attr("cy", probScale(prob))
+                                    .attr("r", 5)
+                                    .style("fill", estateScale(key));
+        
+                            })
+
+                               
+                        
+                            });
+
+
+                            // d3.values(estate).forEach(function(month){
+                            //     // console.log("month",month)
+                            //     // console.log(estate, month, month["prob"])
+                            //     // console.log(estate, month, month["count"])
+                            //     // create_svg(topic, estate, month, prob, count);
+                            //     prob = month["prob"];
+                            //     count = month["count"];
+                            //     // console.log(prob, count);
+
+
+
+                
+                            
+
+
+                                // });
+                       
+                           
+                        });
+                    // });
+                
+            </script>
+	</body>
+</html>
