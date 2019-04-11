@@ -1,0 +1,232 @@
+<!DOCTYPE HTML>
+<!--
+	Phantom by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Curating clean text</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../assets/css/main.css" />
+		<link rel="icon" href="../images/favicon.png">
+		<noscript><link rel="stylesheet" href="../assets/css/noscript.css" /></noscript>
+        <script src="https://d3js.org/d3.v5.min.js"></script>
+        <style>
+        .topic { margin: 20px; }
+        .topic .words { float: right; width: 50%; }
+        .topic .clearing { clear: both; }
+        .line {
+            fill: none;
+            stroke: steelblue;
+            stroke-width: 2px;
+            }
+        svg { margin: 20; }
+        path.confidence { fill: #eee; }
+        path.mean { fill: none; stroke: #999; stroke-width: 5; }
+        .axis path, .axis line {
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+        }
+        </style>
+	</head>
+	<body class="is-preload">
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<div class="inner">
+
+
+							<!-- Nav -->
+								<nav>
+									<ul>
+										<li><a href="#menu">Menu</a></li>
+									</ul>
+								</nav>
+
+						</div>
+					</header>
+
+				<!-- Menu -->
+					<nav id="menu">
+						<h2>Menu</h2>
+						<ul>
+							<li><a href="../index.html">Home</a></li>
+							<li><a href="../about.html">About</a></li>
+							<li><a href="../blog.html">Blog</a></li>
+							<li><a href="../portfolio.html">Portfolio</a></li>
+							<li><a href="../contact.html">Contact</a></li>
+						</ul>
+					</nav>
+
+				<!-- Main -->
+					<div id="main">
+						<div class="inner">
+                            <h1>topics</h1>
+                            <h2>topic modeling vis</h2>
+                            <p>mimno style d3 looping</p>
+                            <!-- <svg id="estate" height="500" width="800"></svg> -->
+                            <div id="topics"></div>
+                        </div>
+                    </div>
+            <!-- Footer -->
+            <footer class="footer">
+                    <div class="inner">
+                        <section>
+                                <h2 style="margin-right: 30px;
+                                display: inline-block;">Follow</h2>
+                                <ul class="icons">
+                                    <li><a href="https://www.linkedin.com/in/isabelle-debrabanter/" class="icon style2 fa-linkedin"><span class="label">Twitter</span></a></li>
+                                    <li><a href="https://github.com/id96" class="icon style2 fa-github"><span class="label">GitHub</span></a></li>
+                                    <li><a href="mailto:id96@cornell.edu" class="icon style2 fa-envelope-o"><span class="label">Email</span></a></li>
+                                </ul>
+                            </section>
+                            <ul class="copyright">
+                                <li>&copy; Isabelle De Brabanter. All rights reserved</li>
+                            </ul>
+                    </div>
+                </footer>
+
+        </div>
+
+		<!-- Scripts -->
+            <script src="../assets/js/jquery.min.js"></script>
+            <script src="../assets/js/browser.min.js"></script>
+            <script src="../assets/js/breakpoints.min.js"></script>
+            <script src="../assets/js/util.js"></script>
+            <script src="../assets/js/main.js"></script>
+            <script>
+                
+                
+                
+                var topics;
+                d3.json("../date_sep.json").then(function(data) {
+                    topics = data;
+                    console.log(data);
+                    var maxProb = 0.1;
+
+                    var height = 280;
+	                var width = 750;
+
+                    const monthScale = d3.scaleTime()
+                        .domain([new Date(1789, 6), new Date(1791, 8)])
+	                    .range([0, 700]);
+	
+                    var topicsDiv = d3.select("#topics");
+
+                    d3.values(data).forEach(function(d,i) {
+                        // console.log(d)
+                        // console.log(i)
+                        var yScale = d3.scaleLinear()
+                            .domain([0, maxProb])
+                            .range([250, 0]);
+		                var yAxis = d3.axisLeft(yScale)
+                        var xAxis = d3.axisBottom(monthScale)
+                            .tickFormat(d3.timeFormat("%b %Y"))
+                            .ticks(10)
+
+                        var topicDiv = topicsDiv.append("div")
+                            .attr("class", "topic");
+                        
+                        topicDiv.append("div")
+                            .attr("name", "t" + i)
+                            .text("topic "+i);
+
+                        topicDiv.append("div")
+                            .attr("class", "words")
+                            // .text(topic.topic + ". [" + topic.label + "] " + topic.words.join(" "));
+                        
+                        var svg = topicDiv.append("svg")
+                            .attr("height", height)
+                            .attr("width", width)
+                            .append("g").attr("transform", "translate(40,10)");
+                        
+                        svg.append("g")
+                            .attr("class", "y axis")
+                            .call(yAxis);
+
+                        svg.append("g")
+                            .attr("class", "x axis")
+                            .attr("transform", "translate(0,250)")
+                            .call(xAxis);
+                        
+                        // console.log("d",d);
+                        // console.log(d["estate 1"]);
+                        // console.log(d["estate 1"]["1789-07"]["prob"]);
+                        // console.log("Test", yScale(d["estate 1"]["1789-07"]["prob"]));
+                        
+                        // estate 1 for each topic
+                        console.log("values", d3.values(d)[0]); 
+
+
+                        var estate1 = d3.values(d)[0];
+                        var estate2 = d3.values(d)[1];
+                        var estate3 = d3.values(d)[2];
+                        var months = d3.keys(estate1);
+
+                        let parseDate = d3.timeParse("%Y-%m");
+                        let formatTime = d3.timeFormat("%Y-%m");
+
+                        monthScale_dict = {}
+
+                        months.forEach( (function(d,i){
+                            month = monthScale(parseDate(d));
+                            monthScale_dict[i] = month;
+                        }));
+
+                        
+
+                        
+                        
+                        // Calling line function on the three estates
+                        // svg.append("path")
+                        //     .attr("class", "line")
+                        //     .attr("d", line(estate1))
+                        //     .attr("d", line(estate2))
+                        //     .attr("d", line(estate3));
+
+
+                        var line = d3.line()
+                            .y(function (d) { return d[1]})
+                            .x(function (d, i) { return d[0]; });
+
+                        estate1_points = []
+                        d3.values(estate1).forEach( (function(d,i){
+                            var scaled_x = monthScale_dict[i];
+                            var scaled_y = yScale(d["prob"]);
+                            estate1_points.push([scaled_x, scaled_y]);
+                        }));
+                        estate2_points = []
+                        d3.values(estate2).forEach( (function(d,i){
+                            var scaled_x = monthScale_dict[i];
+                            var scaled_y = yScale(d["prob"]);
+                            estate2_points.push([scaled_x, scaled_y]);
+                        }));
+                        estate3_points = []
+                        d3.values(estate3).forEach( (function(d,i){
+                            var scaled_x = monthScale_dict[i];
+                            var scaled_y = yScale(d["prob"]);
+                            estate3_points.push([scaled_x, scaled_y]);
+                        }));
+
+                        svg.append("path")
+                            .attr("class", "line")
+                            .attr("d", line(estate1_points))
+                            .style("stroke", "red");
+                        svg.append("path")
+                            .attr("class", "line")
+                            .attr("d", line(estate2_points))
+                            .style("stroke", "green");
+                        svg.append("path")
+                            .attr("class", "line")
+                            .attr("d", line(estate3_points))
+                            .style("stroke", "blue");
+                    });
+                });
+            </script>
+	</body>
+</html>

@@ -58,6 +58,7 @@
                             <h2>Data Visualisations!</h2>
                             <p>Let's go!</p>
                             <svg id="estate" height="500" width="800"></svg>
+                            <div id="simpleLegend" class="legend"></div>
                             <p>Top 15 Words of Topic 0:</p>
                                 <li>1. cela</li>
                                 <li>2. membre</li>
@@ -74,7 +75,8 @@
                                 <li>13. applaudissements</li>
                                 <li>14. gauche</li>
                                 <li>15. murmures</li>
-
+                            <br></br>
+                            <svg id="speaker" height="500" width="800"></svg>
                         </div>
                     </div>
             <!-- Footer -->
@@ -116,43 +118,37 @@
                 let chartWidth = width - margin.left - margin.right;
                 let chartHeight = height - margin.top - margin.bottom;
 
-
                 // function create_svg(topic, estate, month, prob, count){
-
                 // };
 
+                const monthScale = d3.scaleTime()
+                    .domain([new Date(1789, 6), new Date(1791, 8)])
+	                .range([0, 700]);
+            
+                const probScale = d3.scaleLinear()
+                .domain([0, 0.06])
+                .range([chartHeight, 0]);
+                
+                const estateScale = d3.scaleOrdinal()
+                        .range(["red", "blue", "green"]);
+                
+                let bottomAxis = d3.axisBottom(monthScale)
+                    .tickFormat(d3.timeFormat("%b %Y"))
+                    .ticks(10);
+                
+                let leftAxis = d3.axisLeft(probScale)
+                    .tickFormat(d3.format(".2f"))
 
 
                 var estateData;
                 d3.json("../date_sep.json").then(function(data) {
                     estateData = data;
-                    console.log("data",data);
+                    // console.log("data",data);
 
-                    const monthScale = d3.scaleTime()
-                    .domain([new Date(1789, 6), new Date(1791, 8)])
-	                .range([0, 700]);
-            
-
-                    const probScale = d3.scaleLinear()
-                    .domain([0, 0.06])
-                    .range([chartHeight, 0]);
-
-                    const estateScale = d3.scaleOrdinal()
-                        .range(["red", "blue", "green"]);
-
-                    // AXES
-                    let leftAxis = d3.axisLeft(probScale)
-                        // .tickFormat(d3.format(",.2f"))
-                        .tickFormat(d3.format(".2f"))
-                        // .ticks(6); 
                     svg.append("g").attr("class", "y axis") 
                         .attr("transform","translate("+ (margin.left) +","+(-margin.top/2) +")")
                         .call(leftAxis);
 
-                    let bottomAxis = d3.axisBottom(monthScale)
-                        .tickFormat(d3.timeFormat("%b %Y"))
-                        .ticks(27);
-                
                     svg.append("g")
                         .attr("class", "x axis")
                         .attr("transform", "translate("+ margin.left +","+ (chartHeight -10) +")")
@@ -198,49 +194,107 @@
                                     // .y(function(d) { return probScale(d.y); }) 
                                     // .x(function(){ return monthScale(key2);}) 
                                     // .y( function() { return probScale(prob);}) 
-                                    .x( (d,i) =>  monthScale( i ) )
+                                    .x( (d,i) =>  monthScale( d ) )
                                     .y(  d    =>  probScale( d ))
                                     .curve(d3.curveMonotoneX);
 
-                                let line = plot.append("path")
-                                    .datum([])
-                                    .attr("class", "line")
-                                    .attr("d", linegen)
+                                // let line = plot.append("path")
+                                //     .datum([topic_0])
+                                //     .attr("class", "line")
+                                //     .attr("d", linegen);
 
                                 let circle = plot.append("circle")
                                     .attr("cx", monthScale(key2))
                                     .attr("cy", probScale(prob))
                                     .attr("r", 5)
-                                    .style("fill", estateScale(key));
-        
-                            })
+                                    .attr("estate", estateScale())
+                                    .attr("date", key2)
+                                    .style("fill", estateScale(key))
+                                    .on("mouseover", function () {
+                                        d3.select(this)
+                                            // .transition().duration(200)
+                                            // .style("stroke", "#000")
+                                            // .attr("r", 15);
+                                        // add label
+                                        plot.append("text")
+                                            .attr("id", "tooltip")
+                                            .attr("x", d3.select(this).attr("cx"))
+                                            .attr("y", d3.select(this).attr("cy") - 15)
+                                            .text(d3.select(this).attr("date"));
+                                    })
+                                    .on("mouseout", function () {
+                                        d3.select(this)
+                                            // .transition().duration(200)
+                                            // .attr("r", 4)
+                                            // .style("stroke", "none");
+                                        d3.select("#tooltip").remove();
 
-                               
-                        
+
+                                    });
+                                
+                                // LEGEND
+                                estateScale.domain().forEach(function(d,i) {
+                                    d3.select("#simpleLegend")
+                                        .append("span").text(d)
+                                        .style("color", estateScale(d))
+                                    });
+                                })
                             });
-
-
-                            // d3.values(estate).forEach(function(month){
-                            //     // console.log("month",month)
-                            //     // console.log(estate, month, month["prob"])
-                            //     // console.log(estate, month, month["count"])
-                            //     // create_svg(topic, estate, month, prob, count);
-                            //     prob = month["prob"];
-                            //     count = month["count"];
-                            //     // console.log(prob, count);
-
-
-
-                
-                            
-
-
-                                // });
-                       
-                           
                         });
-                    // });
-                
+                let svg_speaker = d3.select("svg#speaker");
+                var speakerData;
+                d3.json("../speaker.json").then(function(data2) {
+                    speakerData = data2;
+                    console.log("speaker data",data2);
+                    // console.log(d3.keys(data["M Bouche"]));
+
+                    svg_speaker.append("g").attr("class", "y axis") 
+                        .attr("transform","translate("+ (margin.left) +","+(-margin.top/2) +")")
+                        .call(leftAxis);
+
+                    svg_speaker.append("g")
+                        .attr("class", "x axis")
+                        .attr("transform", "translate("+ margin.left +","+ (chartHeight -10) +")")
+                        .call(bottomAxis)
+                        .selectAll("text") 
+                            .style("text-anchor", "end")
+                            .attr("dx", "-.8em")
+                            .attr("dy", ".15em")
+                            .attr("transform", "rotate(-65)");
+                   
+                    let plot_sp = svg_speaker.append("g")
+                        .attr("transform","translate("+ (margin.left) +","+ (margin.top) +")")
+                    plot_sp.append("text")
+                        .attr("x", (chartWidth / 2))             
+                        .attr("y", 0 - (margin.top / 4))
+                        .attr("text-anchor", "middle")  
+                        .style("font-size", "16px") 
+                        .style("text-decoration", "underline")  
+                        .text("Top 9 Speakers Over Time");
+
+                    date_array = d3.keys(data2["M Bouche"]).map(
+                        // d => {"date": d, "prob": data["M Bouche"][d]}
+                        function(d){
+                            return {"date": d, "prob": data2["M Bouche"][d]}
+                        }
+                        // d => {"a":d}
+                    );
+                    console.log("Array", date_array);
+                    var linegen = d3.line()
+                        // .x(function(d, i) { return monthScale(i); }) 
+                        // .y(function(d) { return probScale(d.y); }) 
+                        // .x(function(){ return monthScale(key2);}) 
+                        // .y( function() { return probScale(prob);}) 
+                        .x( (d,i) =>  monthScale( d["date"] ) )
+                        .y(  d    =>  probScale( d["prob"] ))
+                        .curve(d3.curveMonotoneX);
+
+                    let line = plot_sp.append("path")
+                        .datum([date_array])
+                        .attr("class", "line")
+                        .attr("d", linegen);
+                });
+                 
             </script>
 	</body>
 </html>
