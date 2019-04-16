@@ -102,11 +102,11 @@
             <script>
                 
                 
-                
-                var topics;
-                d3.json("../date_sep.json").then(function(data) {
-                    topics = data;
-                    console.log(data);
+            const async = async () => {
+                const data = await d3.json("../date_sep.json");
+                const words = await d3.json("../topic_words.json")
+                    console.log("data", data);
+                    console.log("words", words)
                     var maxProb = 0.1;
 
                     var height = 280;
@@ -117,10 +117,11 @@
 	                    .range([0, 700]);
 	
                     var topicsDiv = d3.select("#topics");
+               
 
                     d3.values(data).forEach(function(d,i) {
-                        // console.log(d)
-                        // console.log(i)
+                        console.log(d)
+                        console.log(i)
                         var yScale = d3.scaleLinear()
                             .domain([0, maxProb])
                             .range([250, 0]);
@@ -136,9 +137,23 @@
                             .attr("name", "t" + i)
                             .text("topic "+i);
 
-                        topicDiv.append("div")
+                        words.forEach(function(d,i){
+                            console.log("d",d)
+                            console.log("i",i)
+                            topicDiv.append("div")
                             .attr("class", "words")
-                            // .text(topic.topic + ". [" + topic.label + "] " + topic.words.join(" "));
+                            .text(words[i].words.join(" "))
+                            // .text(words[i].topic);
+                        })
+                        
+                        
+                        topicDiv.append("div")
+                            .attr("id", "simpleLegend")
+                            // .text()
+
+                        // d3.select("#simpleLegend")
+                        //     .append("span").text("Estate 1")
+                        //     .style("color", "red")
                         
                         var svg = topicDiv.append("svg")
                             .attr("height", height)
@@ -154,13 +169,9 @@
                             .attr("transform", "translate(0,250)")
                             .call(xAxis);
                         
-                        // console.log("d",d);
-                        // console.log(d["estate 1"]);
-                        // console.log(d["estate 1"]["1789-07"]["prob"]);
-                        // console.log("Test", yScale(d["estate 1"]["1789-07"]["prob"]));
+                             // LEGEND
                         
-                        // estate 1 for each topic
-                        console.log("values", d3.values(d)[0]); 
+                        
 
 
                         var estate1 = d3.values(d)[0];
@@ -177,17 +188,6 @@
                             month = monthScale(parseDate(d));
                             monthScale_dict[i] = month;
                         }));
-
-                        
-
-                        
-                        
-                        // Calling line function on the three estates
-                        // svg.append("path")
-                        //     .attr("class", "line")
-                        //     .attr("d", line(estate1))
-                        //     .attr("d", line(estate2))
-                        //     .attr("d", line(estate3));
 
 
                         var line = d3.line()
@@ -213,20 +213,40 @@
                             estate3_points.push([scaled_x, scaled_y]);
                         }));
 
-                        svg.append("path")
-                            .attr("class", "line")
-                            .attr("d", line(estate1_points))
-                            .style("stroke", "red");
-                        svg.append("path")
-                            .attr("class", "line")
-                            .attr("d", line(estate2_points))
-                            .style("stroke", "green");
-                        svg.append("path")
-                            .attr("class", "line")
-                            .attr("d", line(estate3_points))
-                            .style("stroke", "blue");
+                        let estate1_line = svg.append("path")
+                                .attr("class", "line")
+                                .attr("d", line(estate1_points))
+                                .style("stroke", "red");
+                        let estate2_line = svg.append("path")
+                                .attr("class", "line")
+                                .attr("d", line(estate2_points))
+                                .style("stroke", "green");
+                        let estate3_line = svg.append("path")
+                                .attr("class", "line")
+                                .attr("d", line(estate3_points))
+                                .style("stroke", "blue");
+                    
+                    // ON MOUSEOVER 
+                    estate1_line.on("mouseover", function() {
+                        console.log(d3.select(this));
+                        d3.select(this)
+                        // Adding labels
+                        svg.append("text")
+                        .attr("id", "tooltip")  // We need to be able to find this to remove it later, so lets store an ID
+                        .attr("x", d[0] )
+                        .attr("y", d[1] )
+                        .text(d['estate']);
                     });
-                });
+                    estate1_line.on("mouseout", function() {
+                        d3.select(this)
+                        // Grab label by element ID
+                        d3.select("#tooltip").remove();
+                    });
+ 
+                    });
+               
+            };
+        async();
             </script>
 	</body>
 </html>

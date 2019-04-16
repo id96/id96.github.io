@@ -1,0 +1,188 @@
+<!DOCTYPE HTML>
+<!--
+	Phantom by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Curating clean text</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../assets/css/main.css" />
+		<link rel="icon" href="../images/favicon.png">
+		<noscript><link rel="stylesheet" href="../assets/css/noscript.css" /></noscript>
+        <script src="https://d3js.org/d3.v5.min.js"></script>
+        <style>
+        .topic { margin: 20px; }
+        .topic .words { float: right; width: 50%; }
+        .topic .clearing { clear: both; }
+        .line {
+            fill: none;
+            stroke: steelblue;
+            stroke-width: 2px;
+            }
+        svg { margin: 20; }
+        path.confidence { fill: #eee; }
+        path.mean { fill: none; stroke: #999; stroke-width: 5; }
+        .axis path, .axis line {
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+        }
+        </style>
+	</head>
+	<body class="is-preload">
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<div class="inner">
+
+
+							<!-- Nav -->
+								<nav>
+									<ul>
+										<li><a href="#menu">Menu</a></li>
+									</ul>
+								</nav>
+
+						</div>
+					</header>
+
+				<!-- Menu -->
+					<nav id="menu">
+						<h2>Menu</h2>
+						<ul>
+							<li><a href="../index.html">Home</a></li>
+							<li><a href="../about.html">About</a></li>
+							<li><a href="../blog.html">Blog</a></li>
+							<li><a href="../portfolio.html">Portfolio</a></li>
+							<li><a href="../contact.html">Contact</a></li>
+						</ul>
+					</nav>
+
+				<!-- Main -->
+					<div id="main">
+						<div class="inner">
+                            <h1>topics</h1>
+                            <h2>speaker vis</h2>
+                            <p>top 20 speakers over time + heatmap of correlations</p>
+                            <svg id="speakers_time" height="500" width="800"></svg>
+                            <svg id="speakers_heatmap" height="500" width="800"></svg>
+                        </div>
+                    </div>
+            <!-- Footer -->
+            <footer class="footer">
+                    <div class="inner">
+                        <section>
+                                <h2 style="margin-right: 30px;
+                                display: inline-block;">Follow</h2>
+                                <ul class="icons">
+                                    <li><a href="https://www.linkedin.com/in/isabelle-debrabanter/" class="icon style2 fa-linkedin"><span class="label">Twitter</span></a></li>
+                                    <li><a href="https://github.com/id96" class="icon style2 fa-github"><span class="label">GitHub</span></a></li>
+                                    <li><a href="mailto:id96@cornell.edu" class="icon style2 fa-envelope-o"><span class="label">Email</span></a></li>
+                                </ul>
+                            </section>
+                            <ul class="copyright">
+                                <li>&copy; Isabelle De Brabanter. All rights reserved</li>
+                            </ul>
+                    </div>
+                </footer>
+
+        </div>
+
+		<!-- Scripts -->
+            <script src="../assets/js/jquery.min.js"></script>
+            <script src="../assets/js/browser.min.js"></script>
+            <script src="../assets/js/breakpoints.min.js"></script>
+            <script src="../assets/js/util.js"></script>
+            <script src="../assets/js/main.js"></script>
+            <script>
+                
+                
+            const async = async () => {
+                const old_data = await d3.json("../speaker.json");
+                const data = await d3.json("../speaker2.json");
+                console.log("data", data);
+                
+                let svg = d3.select("svg#speakers_time");
+                let width = svg.attr("width");
+                let height = svg.attr("height");
+                let margin = { top: 20, right: 20, bottom: 20, left: 40};
+                let chartWidth = width - margin.left - margin.right; 
+                let chartHeight = height - margin.top - margin.bottom;
+            
+                const monthScale = d3.scaleTime()
+                    .domain([new Date(1789, 6), new Date(1791, 8)])
+                    .range([0, 700]);
+                var xAxis = d3.axisBottom(monthScale)
+                    .tickFormat(d3.timeFormat("%b %Y"))
+                    .ticks(9)
+                const speechScale = d3.scaleLinear()
+                    .domain([0,160])
+                    .range([250, 0]);
+                var yAxis = d3.axisLeft(speechScale)
+                
+                
+                // Axes
+                svg.append("g")
+                    .attr("class", "y axis")
+                    .attr("transform", "translate(50,50)")
+                    .call(yAxis);
+
+                svg.append("g")
+                    .attr("class", "x axis")
+                    .attr("transform", "translate(50,300)")
+                    .call(xAxis);
+
+                // Axes labels
+                svg.append("text")
+                    .attr("transform", "rotate(-90)")
+                    .attr("y", 0)
+                    .attr("x", -(270))
+                    .attr("dy", "0.8em")
+                    .attr("font-size", "70%")
+                    .text("Number of Speeches by Speaker");
+                
+                let parseDate = d3.timeParse("%Y-%m");
+                let formatTime = d3.timeFormat("%Y-%m");
+
+                // data.forEach( (d,i) => {
+                //     console.log(d)
+                //     console.log(i)
+                // });
+
+                // d3.keys(data).forEach(function(key) {
+                //     var speaker_name = key
+                //     console.log("name", speaker_name)
+
+                    d3.keys(data).forEach(function(key,index) {
+                        console.log(key)
+                        d3.values(data).forEach(function(d){
+                            console.log(key[d])
+                        })
+
+                    //  console.log(key)
+                        // console.log(i)
+                        // console.log(d3.keys(d))
+                        // var months = d3.keys(d);
+                        // console.log(months)
+                        // monthScale_dict = {}
+
+                        // months.forEach( (function(d,i){
+                        //     month = monthScale(parseDate(d));
+                        //     monthScale_dict[i] = month;
+                        // }));
+                        // console.log(monthScale_dict);
+                    
+                    // }) 
+                });
+                let svg_map = d3.select("svg#speakers_heatmap");
+                
+            };
+        async();
+            </script>
+	</body>
+</html>
