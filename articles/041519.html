@@ -158,6 +158,8 @@
                 //     var speaker_name = key
                 //     console.log("name", speaker_name)
 
+                // try d3.Object 
+                // make list of top 10 manually
                     d3.keys(data).forEach(function(key,index) {
                         console.log(key)
                         d3.values(data).forEach(function(d){
@@ -180,7 +182,7 @@
                     // }) 
                 });
                 let svg_map = d3.select("svg#speakers_heatmap");
-                
+
             };
         async();
             </script>

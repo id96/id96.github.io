@@ -1,4 +1,5 @@
-// pickle this list of lists
+// save as json, index is topic #
+// include top 5 words instead
 [["cela","membre","bien","messieurs","rires","demande","voix","droite","oui","plusieurs","non","membres","applaudissements","gauche","murmures"],
 {"words": ["corse","avignonais","français","droits","pays","assemblée","peuple","pape","ville","réunion","été","comtat","voeu","france","avignon"]},
 {"words": ["celle","été","non","doivent","autre","toutes","entre","autres","lois","tout","point","loi","plus","elles","même"]},
