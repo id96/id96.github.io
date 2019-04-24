@@ -30,6 +30,10 @@
         stroke: #000;
         shape-rendering: crispEdges;
         }
+        .axis {
+            font-family: Avenir;}
+        .txt {
+        font-family: Avenir;}
         </style>
 	</head>
 	<body class="is-preload">
@@ -66,11 +70,11 @@
 				<!-- Main -->
 					<div id="main">
 						<div class="inner">
-                            <h1>topics</h1>
-                            <h2>topic modeling vis</h2>
-                            <p>mimno style d3 looping</p>
+                            <h1>Topics Over Time</h1>
+                            <!-- <h2>topic modeling vis</h2> -->
+                            <!-- <p>mimno style d3 looping</p> -->
                             <!-- <svg id="estate" height="500" width="800"></svg> -->
-                            <div id="topics"></div>
+                            <svg id="topics" height="320" width="900"></svg>
                         </div>
                     </div>
             <!-- Footer -->
@@ -103,60 +107,80 @@
                 
                 
             const async = async () => {
-                const data = await d3.json("../mallet_noJune_dateorder.json");
+                const data = await d3.json("../ten_topics.json");
                 
                     console.log("data", data);
                     
                     var maxProb = 0.1;
 
-                    var height = 280;
-	                var width = 750;
+                    // var height = 280;
+	                // var width = 750;
 
                     const monthScale = d3.scaleTime()
                         .domain([new Date(1789, 6), new Date(1791, 8)])
 	                    .range([0, 700]);
+                    var yScale = d3.scaleLinear()
+                        .domain([0, maxProb])
+                        .range([250, 0]);
+                    var yAxis = d3.axisLeft(yScale)
+                    var xAxis = d3.axisBottom(monthScale)
+                        .tickFormat(d3.timeFormat("%b %Y"))
+                        .ticks(9)
 	
-                    var topicsDiv = d3.select("#topics");
+                    // var topicsDiv = d3.select("#topics");
                
+                    let svg = d3.select("svg#topics");
+                    let width = svg.attr("width");
+                    let height = svg.attr("height");
+                    svg.append("g")
+                            .attr("class", "y axis")
+                            .call(yAxis)
+                            .attr("transform", "translate(60,20)")
+                            .style("font-size", 13);
+
+                    svg.append("g")
+                        .attr("class", "x axis")
+                        .attr("transform", "translate(60,270)")
+                        .call(xAxis)
+                        .style("font-size", 12);
+                    
+                    svg.append("text")
+                        .attr("transform", "translate(400,310)")
+                        .text("Date");
+                    svg.append("text")
+                        .attr("transform", "rotate(-90)")
+                        .attr("y", 12)
+                        .attr("x", -(175))
+                        // .attr("dy", "1em")
+                        .text("Probability");
 
                     d3.values(data).forEach(function(d,i) {
                         
-                        var yScale = d3.scaleLinear()
-                            .domain([0, maxProb])
-                            .range([250, 0]);
-		                var yAxis = d3.axisLeft(yScale)
-                        var xAxis = d3.axisBottom(monthScale)
-                            .tickFormat(d3.timeFormat("%b %Y"))
-                            .ticks(9)
-
-                        var topicDiv = topicsDiv.append("div")
-                            .attr("class", "topic");
                         
-                        topicDiv.append("div")
-                            .attr("name", "t" + i)
-                            .text("topic "+i);
 
-                        topicDiv.append("div")
-                            .attr("id", "simpleLegend")
+                        // var topicDiv = topicsDiv.append("div")
+                        //     .attr("class", "topic");
+                        
+                        // topicDiv.append("div")
+                        //     .attr("name", "t" + i)
+                        //     .text("Topic "+i);
+
+                        // topicDiv.append("div")
+                        //     .attr("id", "simpleLegend")
                             // .text()
 
                         // d3.select("#simpleLegend")
                         //     .append("span").text("Estate 1")
                         //     .style("color", "red")
                         
-                        var svg = topicDiv.append("svg")
-                            .attr("height", height)
-                            .attr("width", width)
-                            .append("g").attr("transform", "translate(40,10)");
+                        let plot = svg.append("g")
+                        // var svg = topicDiv.append("svg")
+                        //     .attr("height", height)
+                        //     .attr("width", width)
+                            // .append("g")
+                            .attr("transform", "translate(60,10)");
                         
-                        svg.append("g")
-                            .attr("class", "y axis")
-                            .call(yAxis);
-
-                        svg.append("g")
-                            .attr("class", "x axis")
-                            .attr("transform", "translate(0,250)")
-                            .call(xAxis);
+                        
                         
 
                         let parseDate = d3.timeParse("%Y-%m");
@@ -171,19 +195,19 @@
 
                         points_fixed = []
                         months_order.forEach( (function(month,i){
-                            console.log("?", d[month])
+                            // console.log("?", d[month])
                             prob_scaled = yScale(d[month]["prob"])
                             month_scaled = monthScale(parseDate(month))
-                            console.log("e", month_scaled)
+                            // console.log("e", month_scaled)
                             points_fixed.push([month_scaled, prob_scaled])
                            
                           
                         }));
-                        console.log(points_fixed)
+                        // console.log(points_fixed)
                        
                         points = []
                         d3.values(d).forEach( (function(d,i){
-                            console.log("d wahts going",d)
+                            // console.log("d wahts going",d)
                             // if(i==10){
                             //     i = 9
                             // }
@@ -232,27 +256,64 @@
                             
                             
                         }));
-                        console.log("points", points)
+                        // console.log("points", points)
 
-                        for ( var x=0; x<27; x++){
-                            let circle = svg.append("circle")
-                            .attr("cx", points_fixed[x][0])
-                            .attr("cy", points_fixed[x][1])
-                            .attr("fill", "red")
-                            .attr("r", "3");
-                        }
+                        // for ( var x=0; x<27; x++){
+                        //     let circle = svg.append("circle")
+                        //     .attr("cx", points_fixed[x][0])
+                        //     .attr("cy", points_fixed[x][1])
+                        //     .attr("fill", "#44c7f5")
+                        //     .attr("r", "3");
+                        // }
                         
+                        var colorScale = d3.scaleOrdinal()
+                            .domain([0,1,2,3,4])
+                            .range(["#44c8f6", "#f69221", "#942a29", "#0c0c6d","green"]) 
+
+
 
                         var line = d3.line()
                             .x(function (d) { return d[0] })
                             .y(function (d) { return d[1] }) ;
                         
-                        
+                        console.log(d)
 
-                        let topic_line = svg.append("path")
+                        let topic_line = plot.append("path")
                             .attr("class", "line")
                             .attr("d", line(points_fixed))
-                            .style("stroke", "red");
+                            .style("stroke", colorScale([i]));
+                        
+                        plot.append("text")
+                            .attr("class", "txt")
+                            .attr("transform", "translate(710,128)")
+                            .text("Topic 10")
+                            .style("stroke", "#44c8f6");
+                        plot.append("text")
+                            .attr("class", "txt")
+                            .attr("transform", "translate(710,260)")
+                            .text("Topic 14")
+                            .style("stroke", "#f69221");
+                        plot.append("text")
+                            .attr("class", "txt")
+                            .attr("transform", "translate(710,220)")
+                            .text("Topic 32")
+                            .style("stroke", "#942a29");
+                        plot.append("text")
+                            .attr("class", "txt")
+                            .attr("transform", "translate(710,110)")
+                            .text("Topic 60")
+                            .style("stroke", "#0c0c6d");
+                        plot.append("text")
+                            .attr("class", "txt")
+                            .attr("transform", "translate(710,240)")
+                            .text("Topic 87")
+                            .style("stroke", "green");
+                        // plot.append("text")
+                        //     .attr("class", "txt")
+                        //     .attr("transform", "translate(710,240)")
+                        //     .text("Aug 1789 - Assemblée Générale starts to write The Declaration of Rights of Man")
+                        //     .attr("font-size", "12px")
+                        //     // .style("stroke", "green");
 
                         
                        
