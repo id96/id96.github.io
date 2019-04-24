@@ -141,7 +141,7 @@
 
 
                 var estateData;
-                d3.json("../date_sep.json").then(function(data) {
+                d3.json("../data/date_sep.json").then(function(data) {
                     estateData = data;
                     // console.log("data",data);
 
@@ -243,7 +243,7 @@
                         });
                 let svg_speaker = d3.select("svg#speaker");
                 var speakerData;
-                d3.json("../speaker.json").then(function(data2) {
+                d3.json("../data/speaker.json").then(function(data2) {
                     speakerData = data2;
                     console.log("speaker data",data2);
                     // console.log(d3.keys(data["M Bouche"]));
