@@ -77,7 +77,13 @@
                                 <option value="opel">Opel</option>
                                 <option value="audi">Audi</option>
                               </select> -->
-                            
+                            <form name="myform" onSubmit="return topicClick()">
+                                Select Topic
+                                <!-- <br> -->
+                                <input id="change" type="number" min="0" max="99" value="0">
+                                <!-- <input name="submit"  type="submit" value="submit" > -->
+                            </form>
+                            <!-- <button id="submit">Submit</button> -->
                             <div id="topics"></div>
                         </div>
                     </div>
@@ -113,7 +119,7 @@
             const async = async () => {
                 const data = await d3.json("../data/date_sep.json");
                 // const words = await d3.json("../topic_words.json")
-                    console.log("data", data);
+                    // console.log("data", data);
                     // console.log("words", words)
                     var maxProb = 0.1;
 
@@ -125,45 +131,15 @@
 	                    .range([0, 700]);
 	
                     var topicsDiv = d3.select("#topics");
-               
-
-                    d3.values(data).forEach(function(d,i) {
-                        console.log(d)
-                        console.log(i)
-                        var yScale = d3.scaleLinear()
+                    var yScale = d3.scaleLinear()
                             .domain([0, maxProb])
                             .range([250, 0]);
 		                var yAxis = d3.axisLeft(yScale)
                         var xAxis = d3.axisBottom(monthScale)
                             .tickFormat(d3.timeFormat("%b %Y"))
                             .ticks(10)
-
-                        var topicDiv = topicsDiv.append("div")
-                            .attr("class", "topic");
                         
-                        topicDiv.append("div")
-                            .attr("name", "t" + i)
-                            .text("topic "+i);
-
-                        // words.forEach(function(d,i){
-                        //     console.log("d",d)
-                        //     console.log("i",i)
-                        //     topicDiv.append("div")
-                        //     .attr("class", "words")
-                        //     .text(words[i].words.join(" "))
-                        //     // .text(words[i].topic);
-                        // })
-                        
-                        
-                        topicDiv.append("div")
-                            .attr("id", "simpleLegend")
-                            // .text()
-
-                        // d3.select("#simpleLegend")
-                        //     .append("span").text("Estate 1")
-                        //     .style("color", "red")
-                        
-                        var svg = topicDiv.append("svg")
+                        var svg = topicsDiv.append("svg")
                             .attr("height", height)
                             .attr("width", width)
                             .append("g").attr("transform", "translate(40,10)");
@@ -176,83 +152,108 @@
                             .attr("class", "x axis")
                             .attr("transform", "translate(0,250)")
                             .call(xAxis);
-                        
-                             // LEGEND
-                        
-                        
 
-
-                        var estate1 = d3.values(d)[0];
-                        console.log("estate1", estate1)
-                        var estate2 = d3.values(d)[1];
-                        var estate3 = d3.values(d)[2];
-                        var months = d3.keys(estate1);
-
-                        let parseDate = d3.timeParse("%Y-%m");
-                        let formatTime = d3.timeFormat("%Y-%m");
-
-                        monthScale_dict = {}
-
-                        months.forEach( (function(d,i){
-                            month = monthScale(parseDate(d));
-                            monthScale_dict[i] = month;
-                        }));
-
-
-                        var line = d3.line()
-                            .y(function (d) { return d[1]})
-                            .x(function (d, i) { return d[0]; });
-
-                        estate1_points = []
-                        d3.values(estate1).forEach( (function(d,i){
-                            var scaled_x = monthScale_dict[i];
-                            var scaled_y = yScale(d["prob"]);
-                            estate1_points.push([scaled_x, scaled_y]);
-                        }));
-                        estate2_points = []
-                        d3.values(estate2).forEach( (function(d,i){
-                            var scaled_x = monthScale_dict[i];
-                            var scaled_y = yScale(d["prob"]);
-                            estate2_points.push([scaled_x, scaled_y]);
-                        }));
-                        estate3_points = []
-                        d3.values(estate3).forEach( (function(d,i){
-                            var scaled_x = monthScale_dict[i];
-                            var scaled_y = yScale(d["prob"]);
-                            estate3_points.push([scaled_x, scaled_y]);
-                        }));
-
-                        let estate1_line = svg.append("path")
-                                .attr("class", "line")
-                                .attr("d", line(estate1_points))
-                                .style("stroke", "red");
-                        let estate2_line = svg.append("path")
-                                .attr("class", "line")
-                                .attr("d", line(estate2_points))
-                                .style("stroke", "green");
-                        let estate3_line = svg.append("path")
-                                .attr("class", "line")
-                                .attr("d", line(estate3_points))
-                                .style("stroke", "blue");
                     
-                    // ON MOUSEOVER 
-                    estate1_line.on("mouseover", function() {
-                        console.log(d3.select(this));
-                        d3.select(this)
-                        // Adding labels
-                        svg.append("text")
-                        .attr("id", "tooltip")  // We need to be able to find this to remove it later, so lets store an ID
-                        .attr("x", d[0] )
-                        .attr("y", d[1] )
-                        .text(d['estate']);
-                    });
-                    estate1_line.on("mouseout", function() {
-                        d3.select(this)
-                        // Grab label by element ID
-                        d3.select("#tooltip").remove();
-                    });
- 
-                    });
+                        // console.log(d)
+                        // console.log(i)
+                        
+                        // svg.selectAll("*").remove();
+                        d3.select("#change").on("input", function() {
+                            // update(+this.value);
+                            console.log(+this.value)
+                            svg.selectAll(".line").remove();
+                            draw(+this.value)
+                        });
+                        // draw(i);
+                        function draw(value) {
+                            // adjust the value
+                            // if (tnum == i) {
+                                console.log(value)
+
+                                d3.values(data).forEach(function(d,i) {
+
+                                if (value == i){
+                                    console.log("winner", value, i)
+                                    svg.append("div")
+                                    .attr("id", "t" + i)
+                                    .text("Topic "+i);
+
+                                var estate1 = d3.values(d)[0];
+                                // console.log("estate1", estate1)
+                                var estate2 = d3.values(d)[1];
+                                var estate3 = d3.values(d)[2];
+                                var months = d3.keys(estate1);
+
+                                let parseDate = d3.timeParse("%Y-%m");
+                                let formatTime = d3.timeFormat("%Y-%m");
+
+                                monthScale_dict = {}
+
+                                months.forEach( (function(d,i){
+                                    month = monthScale(parseDate(d));
+                                    monthScale_dict[i] = month;
+                                }));
+
+
+                                var line = d3.line()
+                                    .y(function (d) { return d[1]})
+                                    .x(function (d, i) { return d[0]; });
+
+                                estate1_points = []
+                                d3.values(estate1).forEach( (function(d,i){
+                                    var scaled_x = monthScale_dict[i];
+                                    var scaled_y = yScale(d["prob"]);
+                                    estate1_points.push([scaled_x, scaled_y]);
+                                }));
+                                estate2_points = []
+                                d3.values(estate2).forEach( (function(d,i){
+                                    var scaled_x = monthScale_dict[i];
+                                    var scaled_y = yScale(d["prob"]);
+                                    estate2_points.push([scaled_x, scaled_y]);
+                                }));
+                                estate3_points = []
+                                d3.values(estate3).forEach( (function(d,i){
+                                    var scaled_x = monthScale_dict[i];
+                                    var scaled_y = yScale(d["prob"]);
+                                    estate3_points.push([scaled_x, scaled_y]);
+                                }));
+
+                                
+                                let estate1_line = svg.append("path")
+                                        .attr("class", "line")
+                                        .attr("d", line(estate1_points))
+                                        .style("stroke", "red");
+                                let estate2_line = svg.append("path")
+                                        .attr("class", "line")
+                                        .attr("d", line(estate2_points))
+                                        .style("stroke", "green");
+                                let estate3_line = svg.append("path")
+                                        .attr("class", "line")
+                                        .attr("d", line(estate3_points))
+                                        .style("stroke", "blue");
+                                }
+                                else {
+                                    console.log("loser")
+                                    
+                                }
+                                
+
+                    
+                                })
+
+                        // var topicDiv = topicsDiv.append("div")
+                        //     .attr("class", "topic");
+                        
+                        
+                        // topicDiv.append("div")
+                        //     .attr("id", "simpleLegend")
+                            // .text()
+
+                        // d3.select("#simpleLegend")
+                        //     .append("span").text("Estate 1")
+                        //     .style("color", "red")
+                        
+                    };
                
             };
         async();
