@@ -17,6 +17,10 @@
         .topic { margin: 20px; }
         .topic .words { float: right; width: 50%; }
         .topic .clearing { clear: both; }
+        #topics {
+            width: 60%;
+            display: inline-block;
+        }
         .line {
             fill: none;
             stroke: steelblue;
@@ -29,6 +33,28 @@
         fill: none;
         stroke: #000;
         shape-rendering: crispEdges;
+        }
+        #words {
+            display: inline-block;
+            width: 30%
+        }
+        .words {
+            display: inline-block;
+        }
+        .table-wrapper {
+            width:50%;
+            /* display: inline-block; */
+            font-size: 70%;
+        }
+        /* .select {
+            width: 60%; 
+            display: inline-block;
+        } */
+        #wrapper > * > .inner {
+            padding: 0;
+        }
+        table {
+            margin: 0 0 4em 0;
         }
         </style>
 	</head>
@@ -67,7 +93,6 @@
 					<div id="main">
 						<div class="inner">
                             <h1>Barron & DeDeo Data</h1>
-                            <h2>Estate by Estate Comparisons Per Topic</h2>
                             <!-- <p>mimno style d3 looping</p> -->
                             <!-- <svg id="estate" height="500" width="800"></svg> -->
                             <!-- <button id="change">Select Topic</button> -->
@@ -77,14 +102,245 @@
                                 <option value="opel">Opel</option>
                                 <option value="audi">Audi</option>
                               </select> -->
-                            <form name="myform" onSubmit="return topicClick()">
-                                Select Topic
-                                <!-- <br> -->
-                                <input id="change" type="number" min="0" max="99" value="0">
-                                <!-- <input name="submit"  type="submit" value="submit" > -->
-                            </form>
-                            <!-- <button id="submit">Submit</button> -->
-                            <div id="topics"></div>
+
+                              <div class="select">
+                                <h2>Estate by Estate Comparisons Per Topic</h2>
+                                <form name="myform" onSubmit="return topicClick()">
+                                    Select Topic
+                                    <!-- <br> -->
+                                    <input id="change" type="number" min="0" max="99" value="0">
+                                    <!-- <input name="submit"  type="submit" value="submit" > -->
+                                </form>
+                                <!-- <button id="submit">Submit</button> -->
+                                <div id="topics"></div>
+                                
+                            </div>
+                            <div id="words"></div>
+
+                            <br>
+                            <!-- <h3>Default</h3> -->
+                              <div class="table-wrapper">
+                                
+                                <table class="alt">
+                                        <h2>DeDeo most common topics</h2>
+                                    <thead>
+                                        <tr>
+                                            <th>Topic Number</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Topic 24</td>
+                                            <td>timing and practical management</td>
+                                            
+                                        </tr>
+                                        <tr>
+                                            <td>Topic 27</td>
+                                            <td>discussion and approval of minutes</td>
+                                           
+                                        </tr>
+                                        <tr>
+                                            <td>Topic 34</td>
+                                            <td>procedural quarrels over the adoption of articles</td>
+                                           
+                                        </tr>
+                                        <tr>
+                                            <td>Topic 38</td>
+                                            <td>disagreement over adoption of articles</td>
+                                           
+                                        </tr>
+                                        <tr>
+                                            <td>Topic 55</td>
+                                            <td>literal depictions of conflict and violence within the chamber</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Topic 59</td>
+                                            <td>collaborative adoption of articles</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Topic 77</td>
+                                            <td>quarrels about who gets to speak</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Topic 79</td>
+                                            <td>goals of the assembly</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Topic 90</td>
+                                            <td>technical mangagement of committees</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Topic 94</td>
+                                            <td>logical disagreement between members</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                
+                            </div>
+
+                            <div class="table-wrapper">
+                                    <table class="alt">
+                                            <h2>DeDeo topics associated with longer speeches</h2>
+                                        <thead>
+                                            <tr>
+                                                <th>Topic Number</th>
+                                                <th>Description</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Topic 61</td>
+                                                <td>expressions of patriotism</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Topic 40</td>
+                                                <td>exhortation to deliberate</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Topic 98</td>
+                                                <td>inventing and managing procedure</td> 
+                                            </tr>
+                                            <tr>
+                                                <td>Topic 94</td>
+                                                <td>logical disagreement between members</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Topic 10</td>
+                                                <td>expressions of honor (or opprobrium) for great men</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Topic 21</td>
+                                                <td>threats to the nation from appointed officials and military</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Topic 79</td>
+                                                <td>goals of the assembly</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Topic 32</td>
+                                                <td>presentation of decrees by committees</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Topic 12</td>
+                                                <td>legality and the law</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+
+                                <div class="table-wrapper">
+                                        <table class="alt">
+                                                <h2>DeDeo topics associated with debate over powers to declare war</h2>
+                                            <thead>
+                                                <tr>
+                                                    <th>Topic Number</th>
+                                                    <th>Description</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Topic 17</td>
+                                                    <td>powers and abilities of the state to conduct war</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Topic 91</td>
+                                                    <td>power of the King</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Topic 62</td>
+                                                    <td>military unrest</td> 
+                                                </tr>
+                                                <tr>
+                                                    <td>Topic 92</td>
+                                                    <td>defensive presentation of particular facts</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Topic 30</td>
+                                                    <td>timing and ordering of events</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Topic 53</td>
+                                                    <td>presentation and discussion of decrees</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Topic 74</td>
+                                                    <td>the reading of letters</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Topic 4</td>
+                                                    <td>concern over traitors and other internal threats to the nation</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+
+                                    <div class="table-wrapper">
+                                            <table class="alt">
+                                                    <h2>DeDeo topics associated with top speakers</h2>
+                                                <thead>
+                                                    <tr>
+                                                        <th>Topic Number</th>
+                                                        <th>Description</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Topic 22</td>
+                                                        <td>structure of articles</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Topic 0</td>
+                                                        <td>divisive responses from left and right</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Topic 83</td>
+                                                        <td>doscussion on the declaration of the rights of man</td> 
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Topic 13</td>
+                                                        <td>nationalization of church property</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Topic 86</td>
+                                                        <td>editing of decrees</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Topic 54</td>
+                                                        <td>organization of the military</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Topic 80</td>
+                                                        <td>legislation on the relationship between King and assembly</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Topic 97</td>
+                                                        <td>court of cassation</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Topic 77</td>
+                                                        <td>requests for adjournment and pauses in discussion</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Topic 84</td>
+                                                        <td>pensions</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Topic 69</td>
+                                                        <td>treasury</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Topic 29</td>
+                                                        <td>finance and loans</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                            
                         </div>
                     </div>
             <!-- Footer -->
@@ -118,9 +374,12 @@
                 
             const async = async () => {
                 const data = await d3.json("../data/date_sep.json");
-                // const words = await d3.json("../topic_words.json")
-                    // console.log("data", data);
-                    // console.log("words", words)
+                const words = await d3.json("../data/barron_words.json");
+
+                console.log(data)
+                console.log(words)
+                // console.log(words[0])
+                
                     var maxProb = 0.1;
 
                     var height = 280;
@@ -153,21 +412,20 @@
                             .attr("transform", "translate(0,250)")
                             .call(xAxis);
 
+                    var wordsDiv = d3.select("#words");
+
                     
-                        // console.log(d)
-                        // console.log(i)
-                        
-                        // svg.selectAll("*").remove();
+                     
                         d3.select("#change").on("input", function() {
-                            // update(+this.value);
+                           
                             console.log(+this.value)
                             svg.selectAll(".line").remove();
+                            wordsDiv.selectAll(".words").remove();
                             draw(+this.value)
                         });
-                        // draw(i);
+                      
                         function draw(value) {
-                            // adjust the value
-                            // if (tnum == i) {
+                          
                                 console.log(value)
 
                                 d3.values(data).forEach(function(d,i) {
@@ -177,9 +435,12 @@
                                     svg.append("div")
                                     .attr("id", "t" + i)
                                     .text("Topic "+i);
+                                    wordsDiv.append("div")
+                                    .attr("class", "words")
+                                    .text(words[i])
 
                                 var estate1 = d3.values(d)[0];
-                                // console.log("estate1", estate1)
+                              
                                 var estate2 = d3.values(d)[1];
                                 var estate3 = d3.values(d)[2];
                                 var months = d3.keys(estate1);
@@ -236,23 +497,10 @@
                                     console.log("loser")
                                     
                                 }
-                                
-
+                            
                     
                                 })
 
-                        // var topicDiv = topicsDiv.append("div")
-                        //     .attr("class", "topic");
-                        
-                        
-                        // topicDiv.append("div")
-                        //     .attr("id", "simpleLegend")
-                            // .text()
-
-                        // d3.select("#simpleLegend")
-                        //     .append("span").text("Estate 1")
-                        //     .style("color", "red")
-                        
                     };
                
             };

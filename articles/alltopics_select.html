@@ -1,0 +1,254 @@
+<!DOCTYPE HTML>
+<!--
+	Phantom by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Curating clean text</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../assets/css/main.css" />
+		<link rel="icon" href="../images/favicon.png">
+		<noscript><link rel="stylesheet" href="../assets/css/noscript.css" /></noscript>
+        <script src="https://d3js.org/d3.v5.min.js"></script>
+        <style>
+        .topic { margin: 20px; }
+        .topic .words { float: right; width: 50%; }
+        .topic .clearing { clear: both; }
+        .line {
+            fill: none;
+            stroke: steelblue;
+            stroke-width: 2px;
+            }
+        svg { margin: 20; }
+        path.confidence { fill: #eee; }
+        path.mean { fill: none; stroke: #999; stroke-width: 5; }
+        .axis path, .axis line {
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+        }
+        </style>
+	</head>
+	<body class="is-preload">
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<div class="inner">
+
+
+							<!-- Nav -->
+								<nav>
+									<ul>
+										<li><a href="#menu">Menu</a></li>
+									</ul>
+								</nav>
+
+						</div>
+					</header>
+
+				<!-- Menu -->
+					<nav id="menu">
+						<h2>Menu</h2>
+						<ul>
+							<li><a href="../index.html">Home</a></li>
+							<li><a href="../about.html">About</a></li>
+							<li><a href="../blog.html">Blog</a></li>
+							<li><a href="../portfolio.html">Portfolio</a></li>
+							<li><a href="../contact.html">Contact</a></li>
+						</ul>
+					</nav>
+
+				<!-- Main -->
+					<div id="main">
+						<div class="inner">
+                            <h1>100 Topics Over Time</h1>
+                            <h2>topic modeling visualisations</h2>
+                            <!-- <p>mimno style d3 looping</p> -->
+                            <!-- <svg id="estate" height="500" width="800"></svg> -->
+                            <form name="myform" onSubmit="return topicClick()">
+                                Select Topic
+                                <!-- <br> -->
+                                <input id="change" type="number" min="0" max="99" value="0">
+                                <!-- <input name="submit"  type="submit" value="submit" > -->
+                            </form>
+                            <div id="topics"></div>
+                            <div id="words"></div>
+                        </div>
+                    </div>
+            <!-- Footer -->
+            <footer class="footer">
+                    <div class="inner">
+                        <section>
+                                <h2 style="margin-right: 30px;
+                                display: inline-block;">Follow</h2>
+                                <ul class="icons">
+                                    <li><a href="https://www.linkedin.com/in/isabelle-debrabanter/" class="icon style2 fa-linkedin"><span class="label">Twitter</span></a></li>
+                                    <li><a href="https://github.com/id96" class="icon style2 fa-github"><span class="label">GitHub</span></a></li>
+                                    <li><a href="mailto:id96@cornell.edu" class="icon style2 fa-envelope-o"><span class="label">Email</span></a></li>
+                                </ul>
+                            </section>
+                            <ul class="copyright">
+                                <li>&copy; Isabelle De Brabanter. All rights reserved</li>
+                            </ul>
+                    </div>
+                </footer>
+
+        </div>
+
+		<!-- Scripts -->
+            <script src="../assets/js/jquery.min.js"></script>
+            <script src="../assets/js/browser.min.js"></script>
+            <script src="../assets/js/breakpoints.min.js"></script>
+            <script src="../assets/js/util.js"></script>
+            <script src="../assets/js/main.js"></script>
+            <script>
+                
+                
+            const async = async () => {
+                const data = await d3.json("../data/mallet_noJune_dateorder.json");
+                const words = await d3.json("../data/mallet_words.json");
+                    console.log("data", data);
+                    console.log("words", words)
+                    console.log(words[0])
+                    
+                    var maxProb = 0.1;
+
+                    var height = 280;
+	                var width = 750;
+
+                    const monthScale = d3.scaleTime()
+                        .domain([new Date(1789, 6), new Date(1791, 8)])
+	                    .range([0, 700]);
+	
+                    var topicsDiv = d3.select("#topics");
+                    var yScale = d3.scaleLinear()
+                            .domain([0, maxProb])
+                            .range([250, 0]);
+		                var yAxis = d3.axisLeft(yScale)
+                        var xAxis = d3.axisBottom(monthScale)
+                            .tickFormat(d3.timeFormat("%b %Y"))
+                            .ticks(9)
+
+                        // var topicDiv = topicsDiv.append("div")
+                        //     .attr("class", "topic");
+                        
+                    var wordsDiv = d3.select("#words");
+
+                        var svg = topicsDiv.append("svg")
+                            .attr("height", height)
+                            .attr("width", width)
+                            .append("g").attr("transform", "translate(40,10)");
+                        
+                        svg.append("g")
+                            .attr("class", "y axis")
+                            .call(yAxis)
+                            .style("font-size", 13);
+
+                        svg.append("g")
+                            .attr("class", "x axis")
+                            .attr("transform", "translate(0,250)")
+                            .call(xAxis)
+                            .style("font-size", 13);
+                
+                        d3.select("#change").on("input", function() {
+                            // update(+this.value);
+                            console.log(+this.value)
+                            svg.selectAll(".line").remove();
+                            svg.selectAll(".circle").remove();
+                            wordsDiv.selectAll(".words").remove();
+                            draw(+this.value)
+                        });
+
+                        function draw(value) {
+                            console.log(value)
+                        d3.values(data).forEach(function(d,i) {
+                            if (value == i) {
+                            svg.append("div")
+                                .attr("name", "t" + i)
+                                .text("Topic "+i);
+                            wordsDiv.append("div")
+                                .attr("class", "words")
+                                .text(words[i])
+                            
+
+                            // topicDiv.append("div")
+                            //     .attr("id", "simpleLegend")
+                            //     // .text()
+
+                            // d3.select("#simpleLegend")
+                            //     .append("span").text("Estate 1")
+                            //     .style("color", "red")
+                            
+                            
+                            
+
+                            let parseDate = d3.timeParse("%Y-%m");
+                            let formatTime = d3.timeFormat("%Y-%m");
+
+                            monthScale_dict = {}
+                        
+
+                            
+                            var months_order = ["1789-07", "1789-08", "1789-09", "1789-10","1789-11", "1789-12", "1790-01", "1790-02", "1790-03", "1790-04", "1790-05", "1790-06", "1790-07", "1790-08", "1790-09", "1790-10", "1790-11", 
+    "1790-12", "1791-01", "1791-02", "1791-03", "1791-04", "1791-05", "1791-06", "1791-07", "1791-08", "1791-09"]
+
+                            points_fixed = []
+                            months_order.forEach( (function(month,i){
+                                console.log("?", d[month])
+                                prob_scaled = yScale(d[month]["prob"])
+                                month_scaled = monthScale(parseDate(month))
+                                console.log("e", month_scaled)
+                                points_fixed.push([month_scaled, prob_scaled])
+                            
+                            
+                            }));
+                            console.log(points_fixed)
+                        
+                            points = []
+                            d3.values(d).forEach( (function(d,i){
+                                console.log("d wahts going",d)
+                              
+                                var scaled_x = monthScale_dict[i];
+                                var scaled_y = yScale(d["prob"]);
+                                points.push([scaled_x, scaled_y]);
+                            
+                                
+                                
+                            }));
+                            console.log("points", points)
+
+                            for ( var x=0; x<27; x++){
+                                let circle = svg.append("circle")
+                                .attr("class", "circle")
+                                .attr("cx", points_fixed[x][0])
+                                .attr("cy", points_fixed[x][1])
+                                .attr("fill", "#44c7f5")
+                                .attr("r", "3");
+                            }
+                            
+
+                            var line = d3.line()
+                                .x(function (d) { return d[0] })
+                                .y(function (d) { return d[1] }) ;
+                            
+                            
+
+                            let topic_line = svg.append("path")
+                                .attr("class", "line")
+                                .attr("d", line(points_fixed))
+                                .style("stroke", "#44c7f5");
+
+                            
+                            }
+                        });
+                        }
+                };
+        async();
+            </script>
+	</body>
+</html>
