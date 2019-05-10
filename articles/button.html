@@ -15,7 +15,7 @@
         <script src="https://d3js.org/d3.v5.min.js"></script>
         <style>
         .topic { margin: 20px; }
-        .topic .words { float: right; width: 50%; }
+        /* .topic .words { float: right; width: 50%; } */
         .topic .clearing { clear: both; }
         #topics {
             width: 60%;
@@ -40,12 +40,17 @@
         }
         .words {
             display: inline-block;
+            position: relative;
+            bottom: 150px;
+            left: 20px;
+            /* width: 30%; */
         }
         .table-wrapper {
             width:50%;
             /* display: inline-block; */
             font-size: 70%;
         }
+       
         /* .select {
             width: 60%; 
             display: inline-block;
@@ -55,6 +60,15 @@
         }
         table {
             margin: 0 0 4em 0;
+        }
+        #legend {
+            width: 800px;
+            text-align: center;
+        }
+        #legend p {
+            display: inline; 
+            
+            
         }
         </style>
 	</head>
@@ -112,10 +126,19 @@
                                     <!-- <input name="submit"  type="submit" value="submit" > -->
                                 </form>
                                 <!-- <button id="submit">Submit</button> -->
-                                <div id="topics"></div>
-                                
+                                <div id="legend">
+                                    <p style="color:red;">Estate 1</p>
+                                    <p style="color:green;">Estate 2</p>
+                                    <p style="color:blue;">Estate 3</p>
+                                </div>
+
+                                <div id="title"></div>
+                                <div id="graph"> 
+                                    <div id="topics"></div>
+                                    <div id="words"></div>
+                                </div>
                             </div>
-                            <div id="words"></div>
+                            
 
                             <br>
                             <!-- <h3>Default</h3> -->
@@ -382,8 +405,8 @@
                 
                     var maxProb = 0.1;
 
-                    var height = 280;
-	                var width = 750;
+                    var height = 300;
+	                var width = 800;
 
                     const monthScale = d3.scaleTime()
                         .domain([new Date(1789, 6), new Date(1791, 8)])
@@ -401,16 +424,30 @@
                         var svg = topicsDiv.append("svg")
                             .attr("height", height)
                             .attr("width", width)
-                            .append("g").attr("transform", "translate(40,10)");
+                            .append("g").attr("transform", "translate(60,10)");
+                        
+                        let plot = svg.append("g")
+                            .attr("transform", "translate(20,0)");
                         
                         svg.append("g")
                             .attr("class", "y axis")
+                            .attr("transform", "translate(20,0)")
                             .call(yAxis);
 
                         svg.append("g")
                             .attr("class", "x axis")
-                            .attr("transform", "translate(0,250)")
+                            .attr("transform", "translate(20,250)")
                             .call(xAxis);
+
+                        svg.append("text")
+                            .attr("transform", "translate(360,290)")
+                            .text("Date");
+                        svg.append("text")
+                            .attr("transform", "rotate(-90)")
+                            .attr("y", -20)
+                            .attr("x", -(175))
+                            // .attr("dy", "1em")
+                            .text("Probability");
 
                     var wordsDiv = d3.select("#words");
 
@@ -421,9 +458,11 @@
                             console.log(+this.value)
                             svg.selectAll(".line").remove();
                             wordsDiv.selectAll(".words").remove();
+                            titleDiv.selectAll(".title").remove();
                             draw(+this.value)
                         });
-                      
+                        var titleDiv = d3.select("#title");
+                        
                         function draw(value) {
                           
                                 console.log(value)
@@ -432,12 +471,13 @@
 
                                 if (value == i){
                                     console.log("winner", value, i)
-                                    svg.append("div")
-                                    .attr("id", "t" + i)
-                                    .text("Topic "+i);
+                                    titleDiv.append("div")
+                                        .attr("class", "title")
+                                        .attr("id", "t" + i)
+                                        .text("Topic "+i);
                                     wordsDiv.append("div")
-                                    .attr("class", "words")
-                                    .text(words[i])
+                                        .attr("class", "words")
+                                        .text(words[i])
 
                                 var estate1 = d3.values(d)[0];
                               
@@ -480,15 +520,15 @@
                                 }));
 
                                 
-                                let estate1_line = svg.append("path")
+                                let estate1_line = plot.append("path")
                                         .attr("class", "line")
                                         .attr("d", line(estate1_points))
                                         .style("stroke", "red");
-                                let estate2_line = svg.append("path")
+                                let estate2_line = plot.append("path")
                                         .attr("class", "line")
                                         .attr("d", line(estate2_points))
                                         .style("stroke", "green");
-                                let estate3_line = svg.append("path")
+                                let estate3_line = plot.append("path")
                                         .attr("class", "line")
                                         .attr("d", line(estate3_points))
                                         .style("stroke", "blue");

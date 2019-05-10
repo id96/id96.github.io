@@ -30,6 +30,21 @@
         stroke: #000;
         shape-rendering: crispEdges;
         }
+        #words {
+            display: inline-block;
+            width: 30%
+        }
+        .words {
+            display: inline-block;
+            position: relative;
+            bottom: 150px;
+            left: 40px;
+            /* width: 30%; */
+        }
+        #topics {
+            width: 60%;
+            display: inline-block;
+        }
         </style>
 	</head>
 	<body class="is-preload">
@@ -76,6 +91,7 @@
                                 <input id="change" type="number" min="0" max="99" value="0">
                                 <!-- <input name="submit"  type="submit" value="submit" > -->
                             </form>
+                            <div id="title"></div>
                             <div id="topics"></div>
                             <div id="words"></div>
                         </div>
@@ -118,14 +134,15 @@
                     
                     var maxProb = 0.1;
 
-                    var height = 280;
-	                var width = 750;
+                    var height = 300;
+	                var width = 800;
 
                     const monthScale = d3.scaleTime()
                         .domain([new Date(1789, 6), new Date(1791, 8)])
 	                    .range([0, 700]);
 	
                     var topicsDiv = d3.select("#topics");
+                    var titleDiv = d3.select("#title");
                     var yScale = d3.scaleLinear()
                             .domain([0, maxProb])
                             .range([250, 0]);
@@ -146,21 +163,36 @@
                         
                         svg.append("g")
                             .attr("class", "y axis")
+                            .attr("transform", "translate(20,0)")
                             .call(yAxis)
                             .style("font-size", 13);
 
                         svg.append("g")
                             .attr("class", "x axis")
-                            .attr("transform", "translate(0,250)")
+                            .attr("transform", "translate(20,250)")
                             .call(xAxis)
                             .style("font-size", 13);
+                        
+                        let plot = svg.append("g")
+                            .attr("transform", "translate(20,0)");
+                        
+                        svg.append("text")
+                            .attr("transform", "translate(360,290)")
+                            .text("Date");
+                        svg.append("text")
+                            .attr("transform", "rotate(-90)")
+                            .attr("y", -25)
+                            .attr("x", -(175))
+                            // .attr("dy", "1em")
+                            .text("Probability");
                 
                         d3.select("#change").on("input", function() {
                             // update(+this.value);
                             console.log(+this.value)
-                            svg.selectAll(".line").remove();
-                            svg.selectAll(".circle").remove();
+                            plot.selectAll(".line").remove();
+                            plot.selectAll(".circle").remove();
                             wordsDiv.selectAll(".words").remove();
+                            titleDiv.selectAll(".title").remove();
                             draw(+this.value)
                         });
 
@@ -168,8 +200,9 @@
                             console.log(value)
                         d3.values(data).forEach(function(d,i) {
                             if (value == i) {
-                            svg.append("div")
+                            titleDiv.append("div")
                                 .attr("name", "t" + i)
+                                .attr("class", "title")
                                 .text("Topic "+i);
                             wordsDiv.append("div")
                                 .attr("class", "words")
@@ -213,7 +246,7 @@
                             console.log("points", points)
 
                             for ( var x=0; x<27; x++){
-                                let circle = svg.append("circle")
+                                let circle = plot.append("circle")
                                 .attr("class", "circle")
                                 .attr("cx", points_fixed[x][0])
                                 .attr("cy", points_fixed[x][1])
@@ -228,7 +261,7 @@
                             
                             
 
-                            let topic_line = svg.append("path")
+                            let topic_line = plot.append("path")
                                 .attr("class", "line")
                                 .attr("d", line(points_fixed))
                                 .style("stroke", "#44c7f5");
